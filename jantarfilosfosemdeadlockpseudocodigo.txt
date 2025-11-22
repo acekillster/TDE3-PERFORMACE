@@ -1,0 +1,79 @@
+pseudo codigo jantar filosofo sem deadlock hierarquia de recurso
+
+Constante N <- 5
+
+Estrutura Garfo:
+    inteiro id
+    booleano ocupado <- falso
+
+    procedimento adquirir():
+        enquanto ocupado == verdadeiro:
+            esperar()
+        ocupado <- verdadeiro
+
+    procedimento liberar():
+        ocupado <- falso
+        notificar_todos()
+
+Estrutura Filosofo:
+    inteiro id
+    Garfo garfoEsquerdaReal
+    Garfo garfoDireitaReal
+    texto estado
+
+    procedimento cicloDeVida():
+        enquanto verdadeiro:
+            pensar()
+            estado <- "com fome"
+            escrever("Filosofo", id, "está", estado)
+
+            se garfoEsquerdaReal.id < garfoDireitaReal.id então
+                garfoMenor <- garfoEsquerdaReal
+                garfoMaior <- garfoDireitaReal
+            senão
+                garfoMenor <- garfoDireitaReal
+                garfoMaior <- garfoEsquerdaReal
+            fim_se
+
+            garfoMenor.adquirir()
+            escrever("Filosofo", id, "pegou garfo", garfoMenor.id)
+
+            garfoMaior.adquirir()
+            escrever("Filosofo", id, "pegou garfo", garfoMaior.id)
+
+            estado <- "comendo"
+            escrever("Filosofo", id, "está", estado)
+
+            comer()
+
+            garfoMaior.liberar()
+            escrever("Filosofo", id, "largou garfo", garfoMaior.id)
+
+            garfoMenor.liberar()
+            escrever("Filosofo", id, "largou garfo", garfoMenor.id)
+
+            estado <- "pensando"
+            escrever("Filosofo", id, "está", estado)
+
+Procedimento principal:
+
+    criar vetor garfos[0..N-1]
+    para i de 0 até N-1:
+        garfos[i] <- novo Garfo com id = i
+
+    criar vetor filosofos[0..N-1]
+    para i de 0 até N-1:
+        garfoEsquerda <- garfos[i]
+        garfoDireita <- garfos[(i + 1) mod N]
+        filosofos[i] <- novo Filosofo com:
+            id = i
+            garfoEsquerdaReal = garfoEsquerda
+            garfoDireitaReal = garfoDireita
+            estado = "pensando"
+        iniciar_nova_tarefa(filosofos[i].cicloDeVida)
+
+Função pensar():
+    esperar_tempo_aleatorio()
+
+Função comer():
+    esperar_tempo_aleatorio()

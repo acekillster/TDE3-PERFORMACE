@@ -1,0 +1,71 @@
+jantar filosfo pseudocodigo com deadlock
+
+Constante N <- 5
+
+Estrutura Garfo:
+    inteiro id
+    booleano ocupado <- falso
+
+    procedimento adquirir():
+        enquanto ocupado == verdadeiro:
+            esperar()
+        ocupado <- verdadeiro
+
+    procedimento liberar():
+        ocupado <- falso
+        notificar_todos()
+
+Estrutura Filosofo:
+    inteiro id
+    Garfo garfoEsquerda
+    Garfo garfoDireita
+    texto estado
+
+    procedimento cicloDeVida():
+        enquanto verdadeiro:
+            pensar()
+            estado <- "com fome"
+            escrever("Filosofo", id, "está", estado)
+
+            garfoEsquerda.adquirir()
+            escrever("Filosofo", id, "pegou garfo esquerdo", garfoEsquerda.id)
+
+            garfoDireita.adquirir()
+            escrever("Filosofo", id, "pegou garfo direito", garfoDireita.id)
+
+            estado <- "comendo"
+            escrever("Filosofo", id, "está", estado)
+
+            comer()
+
+            garfoDireita.liberar()
+            escrever("Filosofo", id, "largou garfo direito", garfoDireita.id)
+
+            garfoEsquerda.liberar()
+            escrever("Filosofo", id, "largou garfo esquerdo", garfoEsquerda.id)
+
+            estado <- "pensando"
+            escrever("Filosofo", id, "está", estado)
+
+Procedimento principal:
+
+    criar vetor garfos[0..N-1]
+    para i de 0 até N-1:
+        garfos[i] <- novo Garfo com id = i
+
+    criar vetor filosofos[0..N-1]
+    para i de 0 até N-1:
+        garfoEsquerda <- garfos[i]
+        garfoDireita <- garfos[(i + 1) mod N]
+        filosofos[i] <- novo Filosofo com:
+            id = i
+            garfoEsquerda = garfoEsquerda
+            garfoDireita = garfoDireita
+            estado = "pensando"
+        iniciar_nova_tarefa(filosofos[i].cicloDeVida)
+
+Função pensar():
+    esperar_tempo_aleatorio()
+
+Função comer():
+    esperar_tempo_aleatorio()
